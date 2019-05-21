@@ -1,0 +1,23 @@
+{
+    "sessionAuthHost": "develop2-api.symphony.com",
+    "sessionAuthPort": 8444,
+    "keyAuthHost": "develop2-api.symphony.com",
+    "keyAuthPort": 8444,
+    "podHost": "develop2.symphony.com",
+    "podPort": 443,
+    "agentHost": "develop2.symphony.com",
+    "agentPort": 443,
+    "botUsername": "bot_105",
+    // For bots using RSA authentication
+    "botPrivateKeyPath": "../bot_105",
+    "botPrivateKeyName": "innovatebot_105_privatekey.pem",
+    "botCertPassword": "changeit",
+    "botEmailAddress": "Lily.Yung@hk.email.gs.com",
+    "appCertPath": "",
+    "appCertName": "",
+    "appCertPassword": "",
+    "proxyURL": "",
+    "proxyUsername": "",
+    "proxyPassword": "",
+    "authTokenRefreshPeriod": "30"
+  }
