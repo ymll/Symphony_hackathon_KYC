@@ -1,0 +1,10 @@
+pandas_datareader==0.6.0
+matplotlib==2.2.2
+Flask==1.0.2
+pandas==0.22.0
+statsmodels==0.9.0
+plotly==2.7.0
+alpha_vantage==2.0.0
+numpy==1.14.2
+requests==2.18.4
+Pillow==4.0.0
