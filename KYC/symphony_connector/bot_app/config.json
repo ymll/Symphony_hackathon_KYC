@@ -1,18 +1,20 @@
 {
-    "sessionAuthHost": "develop2-api.symphony.com",
-    "sessionAuthPort": 8444,
-    "keyAuthHost": "develop2-api.symphony.com",
-    "keyAuthPort": 8444,
-    "podHost": "develop2.symphony.com",
+    "sessionAuthHost": "gs-KYC-bot-api.symphony.com",
+    "sessionAuthPort": 443,
+    "keyAuthHost": "gs-KYC-bot.symphony.com",
+    "keyAuthPort": 443,
+    "podHost": "gs-KYC-bot.symphony.com",
     "podPort": 443,
-    "agentHost": "develop2.symphony.com",
+    "agentHost": "gs-KYC-bot.symphony.com",
     "agentPort": 443,
+    "authType": "rsa",
+    "botCertPath": "",
+    "botCertName": "",
+    "botCertPassword": "",
+    "botPrivateKeyPath": "/usr/local/lib/node_modules/generator-symphony/generators/node-bots/rsa/",
+    "botPrivateKeyName": "rsa-private-bot_105.pem",
     "botUsername": "bot_105",
-    // For bots using RSA authentication
-    "botPrivateKeyPath": "../bot_105",
-    "botPrivateKeyName": "innovatebot_105_privatekey.pem",
-    "botCertPassword": "changeit",
-    "botEmailAddress": "Lily.Yung@hk.email.gs.com",
+    "botEmailAddress": "saiyukizn@hotmail.com",
     "appCertPath": "",
     "appCertName": "",
     "appCertPassword": "",
@@ -20,4 +22,4 @@
     "proxyUsername": "",
     "proxyPassword": "",
     "authTokenRefreshPeriod": "30"
-  }
+}
