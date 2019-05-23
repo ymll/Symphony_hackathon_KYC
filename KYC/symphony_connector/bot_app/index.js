@@ -26,3 +26,9 @@ const botHearsRequest = ( event, messages ) => {
 Symphony.initBot(__dirname + '/config.json').then( (symAuth) => {
   Symphony.getDatafeedEventsService( botHearsRequest );
 })
+
+var http = require('http');
+http.createServer(function (req, res) {
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+    res.end('Hello Node.js World!');
+}).listen(8080);
