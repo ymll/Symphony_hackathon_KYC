@@ -11,10 +11,19 @@ const botHearsRequest = ( event, messages ) => {
 
       /* Find grettings */
       let doc_grettings = doc.match('(hello|hi|bonjour)').out('tags');
+      let doc_help = doc.match('(test)').out('tags');
+      let reply_message = '';
       if (doc_grettings.length>0) {
-        let reply_message = 'Hello ' + message.user.firstName;
-        Symphony.sendMessage( message.stream.streamId, reply_message, null, Symphony.MESSAGEML_FORMAT);
+        reply_message = 'Hello ' + message.user.firstName;
+        for (var key1 in message.user) {
+          reply_message += `\n, ${key1}: ${message.user[key1]}`;
+        }
+      } else if (doc_help.length>0) {
+        reply_message = "<messageML>Hello <b>test bold</b>!</messageML>";
+      } else {
+        reply_message = 'Sorry I don\'t know how to handle this yet. Please wait for our next available assistance to help with that';
       }
+      Symphony.sendMessage( message.stream.streamId, reply_message, null, Symphony.MESSAGEML_FORMAT);
 
       /* Detect & analyze request */
       SymphonyBotNLP.findPattern( doc, message );
