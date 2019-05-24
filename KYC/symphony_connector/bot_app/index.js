@@ -12,6 +12,7 @@ const botHearsRequest = ( event, messages ) => {
       /* Find grettings */
       let doc_grettings = doc.match('(hello|hi|bonjour)').out('tags');
       let doc_help = doc.match('(test)').out('tags');
+      let doc_card = doc.match('(card)').out('tags');
       let doc_upload_file = doc.match('(upload)').out('tags');
       let reply_message = '';
       if (doc_grettings.length>0) {
@@ -19,15 +20,21 @@ const botHearsRequest = ( event, messages ) => {
         for (var key1 in message.user) {
           reply_message += `\n, ${key1}: ${message.user[key1]}`;
         }
+        Symphony.sendMessage( message.stream.streamId, reply_message, null, Symphony.MESSAGEML_FORMAT);
       } else if (doc_help.length>0) {
-        reply_message = "Hello <b>test bold</b>!"; // No need Message ML Tag
+        reply_message = "This is a <b>messageML</b>! message"; // No need Message ML Tag
+        Symphony.sendMessage( message.stream.streamId, reply_message, null, Symphony.MESSAGEML_FORMAT);
+      } else if(doc_card.length>0) {
+        reply_message = "<h2>Cards</h2> <card accent=\"tempo-bg-color--blue\" iconSrc=\"./images/favicon.png\"> <header>Card Header. Always visible.</header> <body>Card Body. User must click to view it.</body> </card>";
+        Symphony.sendMessage( message.stream.streamId, reply_message, null, Symphony.MESSAGEML_FORMAT);
       } else if(doc_upload_file.length>0) {
         reply_message = "Click this <a href=\"http://localhost:8080\">link</a> to uploade file";
-      } 
+        Symphony.sendMessage( message.stream.streamId, reply_message, null, Symphony.MESSAGEML_FORMAT);
+      }
       else {
         reply_message = 'Sorry I don\'t know how to handle this yet. Please wait for our next available assistance to help with that';
+        Symphony.sendMessage( message.stream.streamId, reply_message, null, Symphony.MESSAGEML_FORMAT);
       }
-      Symphony.sendMessage( message.stream.streamId, reply_message, null, Symphony.MESSAGEML_FORMAT);
 
       /* Detect & analyze request */
       SymphonyBotNLP.findPattern( doc, message );
