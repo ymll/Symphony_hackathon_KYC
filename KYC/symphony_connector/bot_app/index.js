@@ -26,7 +26,7 @@ const botHearsRequest = ( event, messages ) => {
         reply_message = "This is a <b>messageML</b>! message"; // No need Message ML Tag
         Symphony.sendMessage( message.stream.streamId, reply_message, null, Symphony.MESSAGEML_FORMAT);
       } else if(doc_card.length>0) {
-        reply_message = "<h2>Cards</h2> <card accent=\"tempo-bg-color--blue\" iconSrc=\"./images/favicon.png\"> <header>Card Header. Always visible.</header> <body>Card Body. User must click to view it.</body> </card>";
+        reply_message = html_utils.generateCard('Card Header. Always visible.', 'Card Body. User must click to view it.', './images/favicon.png');
         Symphony.sendMessage( message.stream.streamId, reply_message, null, Symphony.MESSAGEML_FORMAT);
       } else if(doc_upload_file.length>0) {
         reply_message = "Click this <a href=\"http://localhost:8080\">link</a> to uploade file";
