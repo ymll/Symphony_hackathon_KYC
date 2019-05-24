@@ -84,6 +84,12 @@ const botHearsRequest = (event, messages) => {
             reply_message += `You are not authorized to action. Verify Status: ${body.verify_status}`;
           }
           sendMessage(message, reply_message);
+          if(!body.verified)
+          {
+
+            sendMessage(message, questionTemplate[3]);
+            
+          }
         }
         else {
           reply_message += 'You are not authorized to action. Verify Status: No User Found<br/>Please help us to answer some questions to process your onboarding.<br/><br/>';
