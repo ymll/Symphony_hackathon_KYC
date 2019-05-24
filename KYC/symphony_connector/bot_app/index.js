@@ -159,7 +159,7 @@ const botHearsRequest = (event, messages) => {
           }
       })
     } else if (doc_verify.length > 0) {
-      request('http://localhost:5000/api/v1/user/verify?verifier_id=1234&user_id=1001', { json: true }, (error, response, body) => {
+      request.post('http://localhost:5000/api/v1/user/verify?verifier_id=1234&user_id=1001', { json: true }, (error, response, body) => {
           if (!error && response.statusCode == 200) {
               reply_message = 'Done. Verified user Lily (ID: 1001)';
               sendMessage(message, reply_message);
