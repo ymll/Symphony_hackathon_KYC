@@ -1,6 +1,7 @@
 const Symphony = require('symphony-api-client-node');
 const nlp = require('compromise');
 const SymphonyBotNLP = require('./lib/SymphonyBotNLP');
+const html_utils = require('./html-utils');
 
 const userStatus = {};
 
@@ -47,7 +48,7 @@ getQuestion = (message) => {
   if (userStatus[id] > Object.keys(questionTemplate).length - 1) {
     return 'Thank you for your information.';
   } else {
-    return 'Next Question: <br/>' + questionTemplate[userStatus[id]];
+    return questionTemplate[userStatus[id]];
   }
 }
 
@@ -62,20 +63,6 @@ const botHearsRequest = (event, messages) => {
 
     let doc = nlp(message.messageText);
 
-    if (message.user.firstName == 'Sung Min') {
-      request('http://localhost:5000/api/v1/user?id=1001', { json: true }, (error, response, body) => {
-        if (!error && response.statusCode == 200) {
-          sendMessage(message, "Checking whether trader is verified or not...");
-          let reply_message = '';
-          if (body.verified) {
-            reply_message = 'Confirm in system that you are verified to trade';
-          } else {
-            reply_message = `You are not authorized to action. Verify Status: ${body.verify_status}`;
-          }
-          sendMessage(message, reply_message);
-        }
-      })
-    }
 
     /* Find grettings */
     let doc_grettings = doc.match('(hello|hi|bonjour)').out('tags');
@@ -88,9 +75,22 @@ const botHearsRequest = (event, messages) => {
       reply_message = getQuestion(message);
       sendMessage(message, reply_message);
     } else if (doc_grettings.length > 0) {
-      reply_message = 'Hello ' + message.user.firstName + ',<br/>' + 'Please help us to answer some questions.<br/><br/>';
-      reply_message += getQuestion(message);
-      sendMessage(message, reply_message);
+      request('http://localhost:5000/api/v1/user?id=1006', { json: true }, (error, response, body) => {
+        reply_message = "Hello " + message.user.firstName + ",<br/>Checking whether you are verified or not...<br/><br/>";
+        if (!error && response.statusCode == 200) {
+          if (body.verified) {
+            reply_message += 'Confirm in system that you are verified to trade';
+          } else {
+            reply_message += `You are not authorized to action. Verify Status: ${body.verify_status}`;
+          }
+          sendMessage(message, reply_message);
+        }
+        else {
+          reply_message += 'You are not authorized to action. Verify Status: No User Found<br/>Please help us to answer some questions to process your onboarding.<br/><br/>';
+          reply_message += getQuestion(message);
+          sendMessage(message, reply_message);
+        }
+      })
     } else if (doc_help.length > 0) {
       reply_message = "This is a <b>messageML</b>! message"; // No need Message ML Tag
       sendMessage(message, reply_message);
