@@ -1,11 +1,15 @@
 var html_utils = {};
 
 html_utils.generateTable = (table_array) =>  {
-    table_array.array.forEach(row => {
-        row.array.forEach(element => {
-
+    let table_html = '<table>';
+    table_array.forEach(row => {
+        table_html += '<tr>';
+        row.forEach(element => {
+            table_html += '<td>' + element + '</td>';
         });
+        table_html += '</tr>';
     });
+    return table_html + '</table>';
 };
 
 html_utils.generateCard = (header, body, icon_src) => {

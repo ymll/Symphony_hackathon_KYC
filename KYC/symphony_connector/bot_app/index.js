@@ -14,6 +14,7 @@ const botHearsRequest = ( event, messages ) => {
       let doc_grettings = doc.match('(hello|hi|bonjour)').out('tags');
       let doc_help = doc.match('(test)').out('tags');
       let doc_card = doc.match('(card)').out('tags');
+      let doc_table = doc.match('(table)').out('tags');
       let doc_upload_file = doc.match('(upload)').out('tags');
       let reply_message = '';
       if (doc_grettings.length>0) {
@@ -28,7 +29,11 @@ const botHearsRequest = ( event, messages ) => {
       } else if(doc_card.length>0) {
         reply_message = html_utils.generateCard('Card Header. Always visible.', 'Card Body. User must click to view it.', './images/favicon.png');
         Symphony.sendMessage( message.stream.streamId, reply_message, null, Symphony.MESSAGEML_FORMAT);
-      } else if(doc_upload_file.length>0) {
+      } else if(doc_table.length>0) {
+        reply_message = html_utils.generateTable([['col1', 'col2', 'col3'], ['data1', 'data2', 'data3']]);
+        Symphony.sendMessage( message.stream.streamId, reply_message, null, Symphony.MESSAGEML_FORMAT);
+      } 
+      else if(doc_upload_file.length>0) {
         reply_message = "Click this <a href=\"http://localhost:8080\">link</a> to uploade file";
         Symphony.sendMessage( message.stream.streamId, reply_message, null, Symphony.MESSAGEML_FORMAT);
       }
