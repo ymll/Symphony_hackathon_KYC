@@ -62,20 +62,19 @@ const botHearsRequest = (event, messages) => {
 
     let doc = nlp(message.messageText);
 
-    if (message.user.firstName == 'Julia') {
-      Symphony.sendMessage(message.stream.streamId, "Please check whether trader is verified or not", null, Symphony.MESSAGEML_FORMAT);
-
+    if (message.user.firstName == 'Sung Min') {
       request('http://localhost:5000/api/v1/user?id=1001', { json: true }, (error, response, body) => {
-          if (!error && response.statusCode == 200) {
-              if (body.verified) {
-                const message = 'Confirm in system that you are verified to trade';
-              } else {
-                const message = `You are not authorized to action. Verify Status: ${body.verify_status}`;
-              }
-              Symphony.sendMessage(message.stream.streamId, body, null, Symphony.MESSAGEML_FORMAT);
+        if (!error && response.statusCode == 200) {
+          sendMessage(message, "Checking whether trader is verified or not...");
+          let reply_message = '';
+          if (body.verified) {
+            reply_message = 'Confirm in system that you are verified to trade';
+          } else {
+            reply_message = `You are not authorized to action. Verify Status: ${body.verify_status}`;
           }
+          sendMessage(message, reply_message);
         }
-      )
+      })
     }
 
     /* Find grettings */
