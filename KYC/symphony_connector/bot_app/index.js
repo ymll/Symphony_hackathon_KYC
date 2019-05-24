@@ -6,21 +6,34 @@ const html_utils = require('./html-utils');
 const userStatus = {};
 
 const questionTemplate = {
-  0: 'What\'s your name?',
-  1: 'What\'s your company?',
-  2: 'What\'s your asset amount?',
-  3: 'Please upload a supporting document from <a href=\"http://localhost:8080\">here</a> and type anything.'
+  0: 'What\'s your company?',
+  1: 'What\'s your department at your company?',
+  2: 'What\'s your title at your company?',
+  3: 'What\'s your national ID number?',
+  4: 'What\'s your full address?',
+  5: 'What\'s your phone number?',
+  6: 'What\'s your asset amount?',
+  7: 'Please upload a supporting document from <a href=\"http://localhost:8080\">here</a> and type anything.'
 }
 
-parseUserReply = (index, message) => {
+parseUserReply = (index, messageText, message) => {
+  id = message.user.userId;
   switch (index) {
     case 0:
-      userStatus.name = message;
+      userStatus[id].company = messageText;
     case 1:
-      userStatus.company = message;
+      userStatus[id].department = messageText;
     case 2:
-      userStatus.asset = message;
+      userStatus[id].position = messageText;
     case 3:
+      userStatus[id].national_Id = messageText;
+    case 4:
+      userStatus[id].address = messageText;
+    case 5:
+      userStatus[id].phone_number = messageText;
+    case 6:
+      userStatus[id].asset = messageText;
+    case 7:
       {
 
       }
@@ -28,6 +41,7 @@ parseUserReply = (index, message) => {
 }
 
 isNewUser = (id) => {
+  let temp = userStatus[id];
   return userStatus[id] == undefined;
 }
 
@@ -35,20 +49,40 @@ getQuestion = (message) => {
   id = message.user.userId;
   messageText = message.messageText.toString();
   if (isNewUser(id)) {
-    userStatus[id] = 0;
-    // 'name':message.user,
-    // 'company':'gs',
-    // 'asset':123,
-    // 'count':0
+    userStatus[id] = {};
+    userStatus[id].index = 0;
   } else {
-    parseUserReply(userStatus[id], messageText);
-    userStatus[id] += 1;
+    parseUserReply(userStatus[id].index, messageText, message);
+    userStatus[id].index += 1;
   }
 
-  if (userStatus[id] > Object.keys(questionTemplate).length - 1) {
+  if (userStatus[id].index > Object.keys(questionTemplate).length - 1) {
+    var options = {
+      method: 'POST',
+      url: 'http://192.168.0.112:5000/api/v1/user/create',
+      headers:
+      {
+        'postman-token': 'f84139e7-9b85-b2d4-4422-725c59b5479c',
+        'cache-control': 'no-cache',
+        'content-type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW'
+      },
+      formData:
+      {
+        company: 'Symphony',
+        phone: '+1(234)567-8901',
+        national_id: '123436533',
+        email: message.user.email,
+        identity: 'individual',
+        address: 'Hong Kong',
+        position: 'Trader',
+        division: 'Trading Division',
+        doc_path: '',
+        id: id
+      }
+    };
     return 'Thank you for your information.';
   } else {
-    return questionTemplate[userStatus[id]];
+    return questionTemplate[userStatus[id].index];
   }
 }
 
