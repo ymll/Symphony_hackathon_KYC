@@ -1,6 +1,7 @@
 const Symphony = require('symphony-api-client-node');
 const nlp = require('compromise');
 const SymphonyBotNLP = require('./lib/SymphonyBotNLP');
+const html_utils = require('./html-utils');
 
 /* Callback function when the BOT hears a request */
 const botHearsRequest = ( event, messages ) => {
@@ -65,10 +66,7 @@ http.createServer(function (req, res) {
  });
   } else {
     res.writeHead(200, {'Content-Type': 'text/html'});
-    res.write('<form action="fileupload" method="post" enctype="multipart/form-data">');
-    res.write('<input type="file" name="filetoupload"><br>');
-    res.write('<input type="submit">');
-    res.write('</form>');
+    res.write(html_utils.generateUploadForm());
     return res.end();
   }
 }).listen(8080);
