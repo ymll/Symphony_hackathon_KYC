@@ -75,7 +75,7 @@ const botHearsRequest = (event, messages) => {
       reply_message = getQuestion(message);
       sendMessage(message, reply_message);
     } else if (doc_grettings.length > 0) {
-      request('http://localhost:5000/api/v1/user?id=1006', { json: true }, (error, response, body) => {
+      request('http://localhost:5000/api/v1/user?id=1001', { json: true }, (error, response, body) => {
         reply_message = "Hello " + message.user.firstName + ",<br/>Checking whether you are verified or not...<br/><br/>";
         if (!error && response.statusCode == 200) {
           if (body.verified) {
@@ -88,7 +88,7 @@ const botHearsRequest = (event, messages) => {
           {
 
             sendMessage(message, questionTemplate[3]);
-            
+
           }
         }
         else {
