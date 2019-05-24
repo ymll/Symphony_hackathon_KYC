@@ -1,23 +1,29 @@
 const Symphony = require('symphony-api-client-node');
 const nlp = require('compromise');
 const SymphonyBotNLP = require('./lib/SymphonyBotNLP');
-const html_utils = require('./html-utils');
 
 const userStatus = {};
 
 const questionTemplate = {
   0: 'What\'s your name?',
-  1: 'What\'s your company',
-  2: 'What\'s your asset amount'
+  1: 'What\'s your company?',
+  2: 'What\'s your asset amount?',
+  3: 'Please upload a supporting document from <a href=\"http://localhost:8080\">here</a> and type anything.'
 }
 
 parseUserReply = (index, message) => {
-  if (index == 0)
-    userStatus.name = message;
-  else if (index == 1)
-    userStatus.company = message;
-  else if (index == 2)
-    userStatus.asset = message;
+  switch (index) {
+    case 0:
+      userStatus.name = message;
+    case 1:
+      userStatus.company = message;
+    case 2:
+      userStatus.asset = message;
+    case 3:
+      {
+
+      }
+  }
 }
 
 isNewUser = (id) => {
@@ -38,7 +44,7 @@ getQuestion = (message) => {
     userStatus[id] += 1;
   }
 
-  if (userStatus[id] > 2) {
+  if (userStatus[id] > Object.keys(questionTemplate).length - 1) {
     return 'Thank you for your information.';
   } else {
     return 'Next Question: <br/>' + questionTemplate[userStatus[id]];
@@ -55,6 +61,22 @@ const botHearsRequest = (event, messages) => {
   messages.forEach((message, index) => {
 
     let doc = nlp(message.messageText);
+
+    if (message.user.firstName == 'Sung Min') {
+      Symphony.sendMessage(message.stream.streamId, "Please check whether trader is verified or not", null, Symphony.MESSAGEML_FORMAT);
+
+      fetch("http://localhost:5000/api/v1/users").then(response => {
+        Symphony.sendMessage(message.stream.streamId, response, null, Symphony.MESSAGEML_FORMAT);
+        if (response.ok) {
+          Symphony.sendMessage(message.stream.streamId, "GET RESPONSE", null, Symphony.MESSAGEML_FORMAT);
+          return response
+        }
+        return Promise.reject(Error('error'))
+      }).catch(error => {
+        return Promise.reject(Error(error.message))
+      })
+      Symphony.sendMessage(message.stream.streamId, "After Fetch", null, Symphony.MESSAGEML_FORMAT);
+    }
 
     /* Find grettings */
     let doc_grettings = doc.match('(hello|hi|bonjour)').out('tags');
