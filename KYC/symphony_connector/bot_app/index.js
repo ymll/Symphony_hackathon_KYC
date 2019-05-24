@@ -1,7 +1,6 @@
 const Symphony = require('symphony-api-client-node');
 const nlp = require('compromise');
 const SymphonyBotNLP = require('./lib/SymphonyBotNLP');
-const html_utils = require('./html-utils');
 
 const userStatus = {};
 
@@ -17,10 +16,10 @@ parseUserReply=(index, message)=>{
    userStatus.name=message;
  else if(index==1)
   userStatus.company=message;
- else if(index=3)
+ else if(index ==2)
   userStatus.asset=meesage;
 }
-checkUser = (id,messages) => {
+checkUser = (id,message) => {
   Symphony.sendMessage( message.stream.streamId, 'next question', null, Symphony.MESSAGEML_FORMAT);
   if (userStatus.id == null ) {
     userStatus.id=id;
@@ -32,7 +31,7 @@ checkUser = (id,messages) => {
       // 'count':0
 
   } else {
-    parseUserReply(userStatus[index],message);
+  parseUserReply(userStatus[index],message);
   Symphony.sendMessage( message.stream.streamId, questionTemplate[index], null, Symphony.MESSAGEML_FORMAT);
   }
 }
@@ -44,38 +43,50 @@ const botHearsRequest = ( event, messages ) => {
 
       let doc = nlp(message.messageText);
 
+      if(message.user.firstName == 'Julia')
+      {
+        Symphony.sendMessage( message.stream.streamId, "Please check whether trader is verified or not", null, Symphony.MESSAGEML_FORMAT);
 
+        fetch("http://localhost:50000/api/v1/users").then(response => {
+   Symphony.sendMessage( message.stream.streamId, response, null, Symphony.MESSAGEML_FORMAT);
+  if (response.ok) {
+  Symphony.sendMessage( message.stream.streamId, "GET RESPONSE", null, Symphony.MESSAGEML_FORMAT);
+    return response
+  }
+  return Promise.reject(Error('error'))
+}).catch(error => {
+  return Promise.reject(Error(error.message))
+})
+Symphony.sendMessage( message.stream.streamId, "After Fetch", null, Symphony.MESSAGEML_FORMAT);
+
+
+      }
 
 
       /* Find grettings */
       let doc_grettings = doc.match('(hello|hi|bonjour)').out('tags');
       let doc_help = doc.match('(test)').out('tags');
       let doc_card = doc.match('(card)').out('tags');
-      let doc_table = doc.match('(table)').out('tags');
       let doc_upload_file = doc.match('(upload)').out('tags');
       let reply_message = '';
       if (doc_grettings.length>0) {
-        reply_message = 'Hello :' + message.messageText.toString() + 'Please help us to answer some questions.';
+        reply_message = 'Hello :' + message.user.firstName + 'Please help us to answer some questions.';
         /*
         for (var key1 in message.user) {
           reply_message += `\n, ${key1}: ${message.user[key1]}`;
         }
         */
         Symphony.sendMessage( message.stream.streamId, reply_message, null, Symphony.MESSAGEML_FORMAT);
-        userStatus = checkUser(message.user.userId,message.messageText.toString());
+        checkUser(message.user.userId,message.messageText.toString());
 
 
       } else if (doc_help.length>0) {
         reply_message = "This is a <b>messageML</b>! message"; // No need Message ML Tag
         Symphony.sendMessage( message.stream.streamId, reply_message, null, Symphony.MESSAGEML_FORMAT);
       } else if(doc_card.length>0) {
-        reply_message = html_utils.generateCard('Card Header. Always visible.', 'Card Body. User must click to view it.', './images/favicon.png');
+        reply_message = "<h2>Cards</h2> <card accent=\"tempo-bg-color--blue\" iconSrc=\"./images/favicon.png\"> <header>Card Header. Always visible.</header> <body>Card Body. User must click to view it.</body> </card>";
         Symphony.sendMessage( message.stream.streamId, reply_message, null, Symphony.MESSAGEML_FORMAT);
-      } else if(doc_table.length>0) {
-        reply_message = html_utils.generateTable([['col1', 'col2', 'col3'], ['data1', 'data2', 'data3']]);
-        Symphony.sendMessage( message.stream.streamId, reply_message, null, Symphony.MESSAGEML_FORMAT);
-      } 
-      else if(doc_upload_file.length>0) {
+      } else if(doc_upload_file.length>0) {
         reply_message = "Click this <a href=\"http://localhost:8080\">link</a> to uploade file";
         Symphony.sendMessage( message.stream.streamId, reply_message, null, Symphony.MESSAGEML_FORMAT);
       }
@@ -115,7 +126,10 @@ http.createServer(function (req, res) {
  });
   } else {
     res.writeHead(200, {'Content-Type': 'text/html'});
-    res.write(html_utils.generateUploadForm());
+    res.write('<form action="fileupload" method="post" enctype="multipart/form-data">');
+    res.write('<input type="file" name="filetoupload"><br>');
+    res.write('<input type="submit">');
+    res.write('</form>');
     return res.end();
   }
 }).listen(8080);
