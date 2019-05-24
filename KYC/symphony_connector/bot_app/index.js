@@ -100,6 +100,8 @@ const botHearsRequest = (event, messages) => {
 
     /* Find grettings */
     let doc_grettings = doc.match('(hello|hi|bonjour)').out('tags');
+    let doc_pending = doc.match('(pending)').out('tags');
+    let doc_verify = doc.match('(verify)').out('tags');
     let doc_help = doc.match('(test)').out('tags');
     let doc_card = doc.match('(card)').out('tags');
     let doc_table = doc.match('(table)').out('tags');
@@ -143,8 +145,27 @@ const botHearsRequest = (event, messages) => {
     else if (doc_upload_file.length > 0) {
       reply_message = "Click this <a href=\"http://localhost:8080\">link</a> to uploade file";
       sendMessage(message, reply_message);
-    }
-    else {
+    } else if (doc_pending.length > 0) {
+      request('http://localhost:5000/api/v1/operation/pending?assignee_id=1235', { json: true }, (error, response, body) => {
+          if (!error && response.statusCode == 200) {
+              let reply_message = '';
+              if (body === undefined || body.length == 0) {
+                  reply_message = 'No pending task';
+              } else {
+                  reply_message = html_utils.generateTable([['Task', 'User', 'Supporting Doc'], [ body[0].task, 'Lily (ID: ' + body[0].userId + ')', 'Uploaded (1001.pdf)' ]]);
+              }
+              sendMessage(message, "Hi onboarding team! Please action on your pending task... Do you want to verify?");
+              sendMessage(message, reply_message);
+          }
+      })
+    } else if (doc_verify.length > 0) {
+      request('http://localhost:5000/api/v1/user/verify?verifier_id=1234&user_id=1001', { json: true }, (error, response, body) => {
+          if (!error && response.statusCode == 200) {
+              reply_message = 'Done. Verified user Lily (ID: 1001)';
+              sendMessage(message, reply_message);
+          }
+      })
+    } else {
       reply_message = 'Sorry I don\'t know how to handle this yet. Please wait for our next available assistance to help with that';
       sendMessage(message, reply_message);
     }
