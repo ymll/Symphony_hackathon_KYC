@@ -121,7 +121,7 @@ const botHearsRequest = (event, messages) => {
           if(!body.verified)
           {
 
-            sendMessage(message, questionTemplate[3]);
+            sendMessage(message, questionTemplate[7]);
 
           }
         }
