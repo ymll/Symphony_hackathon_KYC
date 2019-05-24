@@ -62,20 +62,20 @@ const botHearsRequest = (event, messages) => {
 
     let doc = nlp(message.messageText);
 
-    if (message.user.firstName == 'Sung Min') {
+    if (message.user.firstName == 'Julia') {
       Symphony.sendMessage(message.stream.streamId, "Please check whether trader is verified or not", null, Symphony.MESSAGEML_FORMAT);
 
-      fetch("http://localhost:5000/api/v1/users").then(response => {
-        Symphony.sendMessage(message.stream.streamId, response, null, Symphony.MESSAGEML_FORMAT);
-        if (response.ok) {
-          Symphony.sendMessage(message.stream.streamId, "GET RESPONSE", null, Symphony.MESSAGEML_FORMAT);
-          return response
+      request('http://localhost:5000/api/v1/user?id=1001', { json: true }, (error, response, body) => {
+          if (!error && response.statusCode == 200) {
+              if (body.verified) {
+                const message = 'Confirm in system that you are verified to trade';
+              } else {
+                const message = `You are not authorized to action. Verify Status: ${body.verify_status}`;
+              }
+              Symphony.sendMessage(message.stream.streamId, body, null, Symphony.MESSAGEML_FORMAT);
+          }
         }
-        return Promise.reject(Error('error'))
-      }).catch(error => {
-        return Promise.reject(Error(error.message))
-      })
-      Symphony.sendMessage(message.stream.streamId, "After Fetch", null, Symphony.MESSAGEML_FORMAT);
+      )
     }
 
     /* Find grettings */
@@ -124,6 +124,7 @@ Symphony.initBot(__dirname + '/config.json').then((symAuth) => {
 var http = require('http');
 var formidable = require('formidable');
 var fs = require('fs');
+var request = require('request');
 
 http.createServer(function (req, res) {
   if (req.url == '/fileupload') {
