@@ -68,14 +68,14 @@ getQuestion = (message) => {
       },
       formData:
       {
-        company: 'Symphony',
-        phone: '+1(234)567-8901',
-        national_id: '123436533',
+        company: userStatus[id].company,
+        phone: userStatus[id].phone_number,
+        national_id: userStatus[id].national_Id,
         email: message.user.email,
         identity: 'individual',
-        address: 'Hong Kong',
-        position: 'Trader',
-        division: 'Trading Division',
+        address: userStatus[id].address,
+        position: userStatus[id].position,
+        division: userStatus[id].department,
         doc_path: '',
         id: id
       }
@@ -109,7 +109,7 @@ const botHearsRequest = (event, messages) => {
       reply_message = getQuestion(message);
       sendMessage(message, reply_message);
     } else if (doc_grettings.length > 0) {
-      request('http://localhost:5000/api/v1/user?id=1001', { json: true }, (error, response, body) => {
+      request('http://localhost:5000/api/v1/user?id=' + message.user.userId, { json: true }, (error, response, body) => {
         reply_message = "Hello " + message.user.firstName + ",<br/>Checking whether you are verified or not...<br/><br/>";
         if (!error && response.statusCode == 200) {
           if (body.verified) {
@@ -118,8 +118,7 @@ const botHearsRequest = (event, messages) => {
             reply_message += `You are not authorized to action. Verify Status: ${body.verify_status}`;
           }
           sendMessage(message, reply_message);
-          if(!body.verified)
-          {
+          if (!body.verified) {
 
             sendMessage(message, questionTemplate[7]);
 
