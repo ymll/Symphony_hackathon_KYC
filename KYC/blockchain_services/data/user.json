@@ -10,7 +10,13 @@
       "name": "Lily Yung",
       "email": "lily.yung@gs.com",
       "address": "1 Sunning Road, Causeway Bay, Hong Kong",
-      "doc_path": ""
+      "doc_path": "",
+      "verified": false,
+      "verify_status": "not started",
+      "identity": "company",
+      "is_trader": true,
+      "position": "Analyst",
+      "division": "IBD"
     }
   }, {
     "id": 1002,
@@ -22,8 +28,14 @@
       "national_id": "K12345678",
       "name": "Jian Deng",
       "email": "jian.deng@gs.com",
-      "address": "",
-      "doc_path": ""
+      "address": "1 Sunning Road, Causeway Bay, Hong Kong",
+      "doc_path": "",
+      "verified": false,
+      "verify_status": "not started",
+      "identity": "individual",
+      "is_trader": false,
+      "position": "Associate",
+      "division": "Securites"
     }
   }
 ]
