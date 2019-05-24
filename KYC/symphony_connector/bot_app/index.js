@@ -19,7 +19,7 @@ const botHearsRequest = ( event, messages ) => {
           reply_message += `\n, ${key1}: ${message.user[key1]}`;
         }
       } else if (doc_help.length>0) {
-        reply_message = "<messageML>Hello <b>test bold</b>!</messageML>";
+        reply_message = "Hello <b>test bold</b>!"; // No need Message ML Tag
       } else {
         reply_message = 'Sorry I don\'t know how to handle this yet. Please wait for our next available assistance to help with that';
       }
