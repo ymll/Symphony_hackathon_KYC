@@ -9,7 +9,6 @@ const questionTemplate = {
   0: 'What\'s your name?',
   1: 'What\'s your company',
   2: 'What\'s your asset amount'
-
 }
 
 parseUserReply = (index, message) => {
@@ -17,18 +16,17 @@ parseUserReply = (index, message) => {
     userStatus.name = message;
   else if (index == 1)
     userStatus.company = message;
-  else if (index = 3)
-    userStatus.asset = meesage;
+  else if (index == 2)
+    userStatus.asset = message;
 }
+
 isNewUser = (id) => {
   return userStatus[id] == undefined;
 }
 
 getQuestion = (message) => {
-  let questionString = '';
   id = message.user.userId;
   messageText = message.messageText.toString();
-  questionString += "<br/>Next Question: ";
   if (isNewUser(id)) {
     userStatus[id] = 0;
     // 'name':message.user,
@@ -37,9 +35,14 @@ getQuestion = (message) => {
     // 'count':0
   } else {
     parseUserReply(userStatus[id], messageText);
+    userStatus[id] += 1;
   }
-  questionString += '<br/>' + questionTemplate[userStatus[id]];
-  return questionString;
+
+  if (userStatus[id] > 2) {
+    return 'Thank you for your information.';
+  } else {
+    return 'Next Question: <br/>' + questionTemplate[userStatus[id]];
+  }
 }
 
 sendMessage = (msgObj, text) => {
@@ -60,8 +63,11 @@ const botHearsRequest = (event, messages) => {
     let doc_table = doc.match('(table)').out('tags');
     let doc_upload_file = doc.match('(upload)').out('tags');
     let reply_message = '';
-    if (doc_grettings.length > 0) {
-      reply_message = 'Hello ' + message.user.firstName + ',<br/>' + 'Please help us to answer some questions.';
+    if (!isNewUser(message.user.userId)) {
+      reply_message = getQuestion(message);
+      sendMessage(message, reply_message);
+    } else if (doc_grettings.length > 0) {
+      reply_message = 'Hello ' + message.user.firstName + ',<br/>' + 'Please help us to answer some questions.<br/><br/>';
       reply_message += getQuestion(message);
       sendMessage(message, reply_message);
     } else if (doc_help.length > 0) {
