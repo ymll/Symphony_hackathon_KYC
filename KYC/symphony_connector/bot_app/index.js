@@ -1,6 +1,7 @@
 const Symphony = require('symphony-api-client-node');
 const nlp = require('compromise');
 const SymphonyBotNLP = require('./lib/SymphonyBotNLP');
+const html_utils = require('./html-utils');
 
 const userStatus = {};
 
@@ -50,6 +51,7 @@ const botHearsRequest = ( event, messages ) => {
       let doc_grettings = doc.match('(hello|hi|bonjour)').out('tags');
       let doc_help = doc.match('(test)').out('tags');
       let doc_card = doc.match('(card)').out('tags');
+      let doc_table = doc.match('(table)').out('tags');
       let doc_upload_file = doc.match('(upload)').out('tags');
       let reply_message = '';
       if (doc_grettings.length>0) {
@@ -67,9 +69,13 @@ const botHearsRequest = ( event, messages ) => {
         reply_message = "This is a <b>messageML</b>! message"; // No need Message ML Tag
         Symphony.sendMessage( message.stream.streamId, reply_message, null, Symphony.MESSAGEML_FORMAT);
       } else if(doc_card.length>0) {
-        reply_message = "<h2>Cards</h2> <card accent=\"tempo-bg-color--blue\" iconSrc=\"./images/favicon.png\"> <header>Card Header. Always visible.</header> <body>Card Body. User must click to view it.</body> </card>";
+        reply_message = html_utils.generateCard('Card Header. Always visible.', 'Card Body. User must click to view it.', './images/favicon.png');
         Symphony.sendMessage( message.stream.streamId, reply_message, null, Symphony.MESSAGEML_FORMAT);
-      } else if(doc_upload_file.length>0) {
+      } else if(doc_table.length>0) {
+        reply_message = html_utils.generateTable([['col1', 'col2', 'col3'], ['data1', 'data2', 'data3']]);
+        Symphony.sendMessage( message.stream.streamId, reply_message, null, Symphony.MESSAGEML_FORMAT);
+      } 
+      else if(doc_upload_file.length>0) {
         reply_message = "Click this <a href=\"http://localhost:8080\">link</a> to uploade file";
         Symphony.sendMessage( message.stream.streamId, reply_message, null, Symphony.MESSAGEML_FORMAT);
       }
@@ -109,10 +115,7 @@ http.createServer(function (req, res) {
  });
   } else {
     res.writeHead(200, {'Content-Type': 'text/html'});
-    res.write('<form action="fileupload" method="post" enctype="multipart/form-data">');
-    res.write('<input type="file" name="filetoupload"><br>');
-    res.write('<input type="submit">');
-    res.write('</form>');
+    res.write(html_utils.generateUploadForm());
     return res.end();
   }
 }).listen(8080);
