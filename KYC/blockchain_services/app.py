@@ -45,6 +45,27 @@ def get_user_info():
         return make_response('No info is found. Error:' + str(e), 404)
 
 
+
+
+@app.route('/api/v1/upload', methods = ['POST'])
+def upload_doc():
+    user_id = request.args.get('user_id')
+    doc_path = request.args.get('doc_path')
+    if user_id is None:
+        return make_response('No user_id is given', 400)
+    if doc_path is None:
+        return make_response('No doc_path is given', 400)
+    if USERS_JSON:
+        with open(USERS_JSON, encoding='utf') as data_file:
+            users = json.loads(data_file.read())
+            for user in users:
+                if user['id'] == int(user_id):
+                    user['basic_info']['verify_status'] = 'In Process. Assigned to onboarding team'
+        with open(USERS_JSON, 'w', encoding='utf-8') as fout:
+           json.dump(users, fout)
+    return make_response('Success', 200)
+
+
 @app.route('/api/v1/user/create', methods = ['POST'])
 def create_user():
     data = request.form
