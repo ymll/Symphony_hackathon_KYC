@@ -62,15 +62,17 @@ def create_user():
     new_user['basic_info']['address'] = data.get('address')
     new_user['basic_info']['position'] = data.get('position')
     new_user['basic_info']['division'] = data.get('division')
-    doc_path = data.get('doc_path')
-    if doc_path:
+    new_user['basic_info']['doc_path'] = data.get('doc_path')
+    if new_user['basic_info']['doc_path']:
         new_user['basic_info']['verified'] = True
         new_user['basic_info']['is_trader'] = True
         new_user['basic_info']['verify_status'] = 'verified'
+        new_user['basic_info']['verify_expire_date'] = '2019-11-24'
     else:
         new_user['basic_info']['verified'] = False
         new_user['basic_info']['is_trader'] = False
         new_user['basic_info']['verify_status'] = 'not started'
+        new_user['basic_info']['verify_expire_date'] = ''
     if USERS_JSON:
         with open(USERS_JSON, encoding='utf') as data_file:
             users = json.loads(data_file.read())
@@ -121,7 +123,7 @@ def verify_user():
                     if user['id'] == int(user_id):
                         user['basic_info']['verify_status'] = 'Success'
                         user['basic_info']['verified'] = True
-                        user['basic_info']['verify_expire_date'] = '2019-12-31'
+                        user['basic_info']['verify_expire_date'] = '2019-11-24'
             with open(USERS_JSON, 'w', encoding='utf-8') as fout:
                 json.dump(users, fout)
         return make_response('Success', 200)

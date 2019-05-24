@@ -19,7 +19,8 @@
       "position": "Analyst",
       "division": "IBD"
     }
-  }, {
+  },
+  {
     "id": 1002,
     "public_key": "",
     "private_key": "",
@@ -38,6 +39,26 @@
       "is_trader": false,
       "position": "Associate",
       "division": "Securites"
+    }
+  },
+  {
+    "id": "1003",
+    "public_key": null,
+    "private_key": null,
+    "basic_info": {
+      "company": "Symphony",
+      "phone": "+1(234)567-8901",
+      "national_id": "123436533",
+      "email": "Test_user@symphony.com",
+      "identity": "individual",
+      "address": "Hong Kong",
+      "position": "Trader",
+      "division": "Trading Division",
+      "doc_path": "",
+      "verified": false,
+      "is_trader": false,
+      "verify_status": "not started",
+      "verify_expire_date": ""
     }
   }
 ]
